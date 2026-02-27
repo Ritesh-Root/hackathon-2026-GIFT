@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import type { User, Session, Subscription } from '@supabase/supabase-js';
 
 interface AuthState {
@@ -28,6 +28,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     initialize: async () => {
         try {
+            // If Supabase is not configured, skip auth and go straight to login/demo
+            if (!isSupabaseConfigured) {
+                set({ loading: false });
+                return;
+            }
+
             // Unsubscribe previous listener to prevent duplicates
             if (authSubscription) {
                 authSubscription.unsubscribe();
