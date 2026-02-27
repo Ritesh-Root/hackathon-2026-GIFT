@@ -1,0 +1,136 @@
+/* ── Community Trading Floor ── */
+
+.community-page {
+    max-width: 900px;
+}
+
+.community-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+}
+
+.community-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.community-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.community-online {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: 50px;
+}
+
+.online-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-success);
+    border-radius: 50%;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.online-count {
+    font-size: 0.78rem;
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+/* Chat */
+.community-chat {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 200px);
+    min-height: 500px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.community-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.community-msg {
+    display: flex;
+    gap: var(--space-sm);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+}
+
+.community-msg:hover {
+    background: rgba(99, 102, 241, 0.04);
+}
+
+.community-msg--self {
+    background: rgba(99, 102, 241, 0.06);
+}
+
+.community-msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.community-msg-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.community-msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin-bottom: 2px;
+}
+
+.community-msg-user {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent-tertiary);
+}
+
+.community-msg-time {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+}
+
+.community-msg-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+/* Input */
+.community-input-area {
+    display: flex;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.community-input {
+    flex: 1;
+}

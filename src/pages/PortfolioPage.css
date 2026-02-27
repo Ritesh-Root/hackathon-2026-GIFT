@@ -1,0 +1,207 @@
+/* ── Portfolio Analyzer ── */
+
+.portfolio-page {
+    max-width: 1200px;
+}
+
+.portfolio-header {
+    margin-bottom: var(--space-lg);
+}
+
+.portfolio-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.portfolio-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+/* Stats */
+.portfolio-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+.portfolio-stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+}
+
+.portfolio-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.portfolio-stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+}
+
+/* Charts Grid */
+.portfolio-charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+.portfolio-chart-card h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.portfolio-chart-wide {
+    grid-column: 1 / -1;
+}
+
+.risk-label {
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: -10px;
+}
+
+/* Table */
+.portfolio-table-card h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+.portfolio-table-wrapper {
+    overflow-x: auto;
+}
+
+.portfolio-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+.portfolio-table th {
+    text-align: left;
+    padding: 10px 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.portfolio-table td {
+    padding: 12px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+.portfolio-table tr:hover td {
+    background: rgba(99, 102, 241, 0.04);
+}
+
+.table-ticker {
+    font-weight: 700;
+    color: var(--text-primary) !important;
+}
+
+.table-name {
+    font-family: var(--font-sans) !important;
+    color: var(--text-primary) !important;
+}
+
+@media (max-width: 768px) {
+    .portfolio-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Interactive Action Buttons ── */
+.th-actions {
+    text-align: right !important;
+    padding-right: 16px !important;
+}
+
+.holdings-row {
+    transition: background 0.2s ease-in-out;
+}
+
+.holdings-row:hover td {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.td-actions {
+    text-align: right !important;
+    padding-right: 8px !important;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.row-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+    opacity: 0;
+    transform: translateX(4px);
+    transition: all 0.2s ease-in-out;
+}
+
+.holdings-row:hover .row-actions {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.action-btn {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap;
+}
+
+.action-buy {
+    color: #00E676;
+    border: 1px solid rgba(0, 230, 118, 0.2);
+}
+
+.action-buy:hover {
+    background: rgba(0, 230, 118, 0.1);
+    box-shadow: 0 0 12px rgba(0, 230, 118, 0.08);
+}
+
+.action-sell {
+    color: #FF3B30;
+    border: 1px solid rgba(255, 59, 48, 0.2);
+}
+
+.action-sell:hover {
+    background: rgba(255, 59, 48, 0.1);
+    box-shadow: 0 0 12px rgba(255, 59, 48, 0.08);
+}
+
+/* Mobile: always show actions */
+@media (max-width: 768px) {
+    .row-actions {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

@@ -1,0 +1,22 @@
+/* ── App-level styles ── */
+
+.app-loader {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-base);
+}
+
+.app-loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.app-loader-text {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  animation: fadeIn 0.6s ease-out;
+}

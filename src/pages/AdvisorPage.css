@@ -1,0 +1,314 @@
+/* ── AI Advisor ── */
+
+.advisor-page {
+    max-width: 900px;
+}
+
+.advisor-header {
+    margin-bottom: var(--space-lg);
+}
+
+.advisor-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.advisor-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+/* Chat Window */
+.advisor-chat {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 200px);
+    min-height: 500px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.advisor-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+/* Messages */
+.advisor-msg {
+    display: flex;
+    gap: var(--space-sm);
+    max-width: 85%;
+}
+
+.advisor-msg--user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.advisor-msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.advisor-msg-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.advisor-msg-text {
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.advisor-msg--ai .advisor-msg-text {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-top-left-radius: 4px;
+}
+
+.advisor-msg--user .advisor-msg-text {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: white;
+    border-top-right-radius: 4px;
+}
+
+.advisor-msg-text p {
+    margin-bottom: 4px;
+}
+
+.advisor-msg-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* Action Cards — Agentic UI */
+.advisor-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.advisor-action-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 12px 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s;
+}
+
+.advisor-action-card:hover {
+    border-color: var(--border-active);
+}
+
+.advisor-action--rebalance {
+    border-left: 3px solid var(--accent-primary);
+}
+
+.advisor-action--alert {
+    border-left: 3px solid var(--color-warning);
+}
+
+.advisor-action--trade {
+    border-left: 3px solid var(--color-success);
+}
+
+.advisor-action--info {
+    border-left: 3px solid var(--color-info);
+}
+
+.advisor-action--agentic_action {
+    border-left: 3px solid var(--color-danger);
+    background: rgba(239, 68, 68, 0.05);
+    /* very light red tint */
+}
+
+.agentic-glow-red {
+    position: relative;
+    z-index: 1;
+    animation: neon-pulse 2s infinite alternate;
+}
+
+@keyframes neon-pulse {
+    0% {
+        box-shadow: 0 0 5px rgba(239, 68, 68, 0.2),
+            inset 0 0 5px rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.6),
+            inset 0 0 10px rgba(239, 68, 68, 0.2);
+        border-color: rgba(239, 68, 68, 0.8);
+    }
+}
+
+.action-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.action-card-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.action-card-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+/* Typing */
+.advisor-typing {
+    display: flex;
+    gap: 4px;
+    padding: 14px 18px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    border-top-left-radius: 4px;
+}
+
+.typing-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    animation: typing-bounce 1.2s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing-bounce {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+    }
+
+    30% {
+        transform: translateY(-6px);
+    }
+}
+
+/* Input Area */
+.advisor-input-area {
+    display: flex;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.advisor-textarea {
+    flex: 1;
+    resize: none;
+    min-height: 42px;
+    max-height: 100px;
+}
+
+.advisor-send-btn {
+    align-self: flex-end;
+}
+
+/* Suggestions */
+.advisor-suggestions {
+    display: flex;
+    gap: var(--space-sm);
+    padding: 0 var(--space-lg) var(--space-md);
+    flex-wrap: wrap;
+}
+
+.advisor-suggestion-btn {
+    padding: 5px 14px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 50px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.advisor-suggestion-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-tertiary);
+    background: rgba(99, 102, 241, 0.06);
+}
+
+/* Agentic Warning Card Demo */
+.agentic-warning-card {
+    background: rgba(255, 59, 48, 0.1);
+    border: 1px solid var(--finance-red);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-top: var(--space-sm);
+    box-shadow: 0 0 20px rgba(255, 59, 48, 0.15);
+}
+
+.agentic-warning-content p {
+    color: var(--text-primary);
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.agentic-warning-card .btn {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.agentic-warning-card .btn-success {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--color-success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.spinner-small {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,206 @@
+/* ── Dashboard Home ── */
+
+.dashboard-home {
+    max-width: 1100px;
+}
+
+.dashboard-home-header {
+    margin-bottom: var(--space-lg);
+}
+
+.dashboard-home-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.dashboard-home-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+/* ── Market Ticker Reel ── */
+.ticker-reel {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+
+    /* Crucial for horizontal scrolling */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scrolling on iOS */
+
+    padding-bottom: var(--space-sm);
+
+    /* Hide scrollbar for a cleaner look */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+}
+
+/* Hide scrollbar for Chrome/Safari/Webkit */
+.ticker-reel::-webkit-scrollbar {
+    display: none;
+}
+
+.ticker-reel-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 10px 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: inherit;
+    min-width: fit-content;
+    transition: all 0.2s ease;
+}
+
+.ticker-reel-item:hover {
+    border-color: var(--border-active);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
+}
+
+.ticker-reel-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ticker-reel-symbol {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.05em;
+}
+
+.ticker-reel-price {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.ticker-reel-change {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+/* ── Stats Grid ── */
+.dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+.dashboard-stat-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.stat-highlight {
+    grid-column: span 1;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.06));
+    border-color: rgba(99, 102, 241, 0.12);
+}
+
+.stat-icon {
+    font-size: 1.4rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+}
+
+.stat-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+.stat-change {
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+/* ── Quick Actions ── */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-md);
+}
+
+.quick-action-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-3px);
+}
+
+.quick-action-emoji {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+}
+
+.quick-action-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.quick-action-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .dashboard-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+}

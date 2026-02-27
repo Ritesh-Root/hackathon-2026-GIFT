@@ -1,0 +1,297 @@
+.paper-trade-sim {
+    margin-top: var(--space-2xl);
+    padding: var(--space-xl);
+    border: 1px solid var(--border-subtle);
+}
+
+.paper-trade-header {
+    margin-bottom: var(--space-md);
+}
+
+.paper-trade-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.paper-trade-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.paper-trade-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.paper-trade-selector {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.pt-ticker-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pt-ticker-btn:hover {
+    border-color: var(--border-active);
+    color: var(--text-primary);
+}
+
+.pt-ticker-btn--active {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--color-success);
+    color: var(--color-success);
+}
+
+.pt-search-form {
+    display: flex;
+    gap: var(--space-sm);
+    flex: 1;
+    max-width: 300px;
+}
+
+.pt-search-input {
+    flex: 1;
+}
+
+.paper-trade-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-lg);
+}
+
+@media (max-width: 1024px) {
+    .paper-trade-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.pt-chart-area {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.pt-loading {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    animation: pulse 1.5s infinite;
+}
+
+.pt-action-area {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.pt-current-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+}
+
+.pt-price-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pt-price-value {
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.pt-price-change {
+    font-size: 0.85rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.text-success {
+    color: var(--color-success);
+}
+
+.text-danger {
+    color: var(--color-danger);
+}
+
+/* Assistant Insight */
+.pt-assistant-card {
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.pt-assistant-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pt-assistant-body {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.pt-assistant-body strong {
+    color: var(--accent-tertiary);
+    /* Soft purple */
+}
+
+/* Trading Controls */
+.pt-trade-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.pt-shares-input label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.pt-trade-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+
+.pt-btn-buy {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+
+.pt-btn-buy:hover:not(:disabled) {
+    background: rgba(16, 185, 129, 0.2);
+}
+
+.pt-btn-sell {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+}
+
+.pt-btn-sell:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.pt-msg {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.pt-msg-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.pt-msg-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Order Value Preview */
+.pt-order-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-sm);
+}
+
+.pt-order-preview-label {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+}
+
+.pt-order-preview-value {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Live Wallet Footer */
+.pt-wallet-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(139, 92, 246, 0.04);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    border-radius: var(--radius-md);
+    margin-top: auto;
+}
+
+.pt-wallet-label {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+.pt-wallet-value {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #8B5CF6;
+    text-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+    transition: all 0.3s ease-in-out;
+}

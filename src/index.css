@@ -1,0 +1,361 @@
+/* =============================================
+   AI FINANCE COPILOT — Design System
+   Dark theme · Glassmorphism · Premium Finance UI
+   ============================================= */
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── CSS Variables (Design Tokens) ── */
+:root {
+  /* Background layers */
+  --bg-main: #050505;
+  --bg-base: #050505;
+  /* Overridden by bg-main */
+  --bg-surface: #12121a;
+  --bg-elevated: #1a1a2e;
+  --bg-card: rgba(20, 20, 22, 0.6);
+  --border-card: rgba(255, 255, 255, 0.06);
+
+  /* Accent palette — electric blue to violet gradient */
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-tertiary: #a78bfa;
+  --accent-glow: rgba(99, 102, 241, 0.3);
+  --accent-purple: #8B5CF6;
+  --accent-purple-glow: rgba(139, 92, 246, 0.4);
+
+  /* Semantic colors */
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+  --color-bullish: #10b981;
+  --color-bearish: #ef4444;
+  --finance-green: #00E676;
+  --finance-red: #FF3B30;
+
+  /* Text */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-accent: #a78bfa;
+
+  /* Glass */
+  --glass-bg: rgba(22, 22, 35, 0.6);
+  --glass-border: rgba(148, 163, 184, 0.1);
+  --glass-blur: 16px;
+
+  /* Borders & Shadows */
+  --border-subtle: rgba(148, 163, 184, 0.08);
+  --border-active: rgba(99, 102, 241, 0.4);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Spacing scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Sidebar */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 72px;
+}
+
+/* ── Reset & Base ── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  /* Deep, dark midnight blue instead of flat black */
+  background-color: #0B0B14;
+  background-image:
+    /* Subtle purple glow top left */
+    radial-gradient(circle at 10% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+    /* Subtle green glow bottom right */
+    radial-gradient(circle at 90% 100%, rgba(0, 230, 118, 0.05) 0%, transparent 40%);
+  color: #FAFAFA;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--accent-tertiary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent-primary);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 3px;
+}
+
+/* ── Utility Classes ── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-glow);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-active);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-danger);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 0.8rem;
+}
+
+.btn-lg {
+  padding: 14px 28px;
+  font-size: 1rem;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ── Inputs ── */
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.badge-bullish {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-bullish);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badge-bearish {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-bearish);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.badge-neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text-secondary);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+/* ── Loading Spinner ── */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.25);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
+/* ── App Root ── */
+#root {
+  min-height: 100vh;
+}

@@ -1,0 +1,114 @@
+{
+    "news": [
+        {
+            "id": 1,
+            "headline": "Apple Vision Pro sees surge in enterprise adoption across Fortune 500",
+            "source": "Bloomberg",
+            "datetime": "2024-01-30T14:30:00Z",
+            "summary": "Multiple Fortune 500 companies are deploying Apple Vision Pro for training, design visualization, and remote collaboration. Enterprise orders have exceeded Apple's internal projections by 40%.",
+            "ticker": "AAPL",
+            "sentiment": "bullish",
+            "sentimentScore": 0.82,
+            "url": "#"
+        },
+        {
+            "id": 2,
+            "headline": "Google faces landmark antitrust ruling — potential forced divestiture of Chrome",
+            "source": "Reuters",
+            "datetime": "2024-01-30T12:15:00Z",
+            "summary": "Federal judge is considering structural remedies in the Google antitrust case, including potential forced sale of Chrome browser. This could significantly impact Alphabet's advertising ecosystem.",
+            "ticker": "GOOGL",
+            "sentiment": "bearish",
+            "sentimentScore": -0.71,
+            "url": "#"
+        },
+        {
+            "id": 3,
+            "headline": "Tesla FSD v12.5 achieves record safety metrics in NHTSA evaluation",
+            "source": "CNBC",
+            "datetime": "2024-01-30T10:45:00Z",
+            "summary": "Tesla's Full Self-Driving version 12.5 recorded 0 disengagements over 10,000 test miles in NHTSA supervised testing, marking a significant milestone for autonomous driving technology.",
+            "ticker": "TSLA",
+            "sentiment": "bullish",
+            "sentimentScore": 0.88,
+            "url": "#"
+        },
+        {
+            "id": 4,
+            "headline": "Microsoft Azure AI revenue surpasses $10B annual run rate",
+            "source": "The Wall Street Journal",
+            "datetime": "2024-01-30T09:00:00Z",
+            "summary": "Microsoft disclosed that Azure AI services have crossed $10B in ARR, driven by Copilot enterprise adoption and growing OpenAI integration. Cloud margins expanded 200bps.",
+            "ticker": "MSFT",
+            "sentiment": "bullish",
+            "sentimentScore": 0.91,
+            "url": "#"
+        },
+        {
+            "id": 5,
+            "headline": "Amazon AWS Bedrock becomes fastest-growing AWS service ever",
+            "source": "TechCrunch",
+            "datetime": "2024-01-29T16:30:00Z",
+            "summary": "AWS Bedrock, Amazon's managed AI service, has become the fastest service to reach $1B in revenue in AWS history. Enterprise customers are rapidly migrating ML workloads to the platform.",
+            "ticker": "AMZN",
+            "sentiment": "bullish",
+            "sentimentScore": 0.79,
+            "url": "#"
+        },
+        {
+            "id": 6,
+            "headline": "Federal Reserve signals potential rate cuts amid cooling inflation",
+            "source": "Financial Times",
+            "datetime": "2024-01-29T14:00:00Z",
+            "summary": "Fed Chair hinted at potential rate cuts starting Q2 2024 as PCE inflation falls below 2.5%. Market reactions broadly positive across tech and growth sectors.",
+            "ticker": "MARKET",
+            "sentiment": "bullish",
+            "sentimentScore": 0.65,
+            "url": "#"
+        },
+        {
+            "id": 7,
+            "headline": "China's economic slowdown weighs on Apple iPhone sales in Asia-Pacific",
+            "source": "Nikkei Asia",
+            "datetime": "2024-01-29T08:20:00Z",
+            "summary": "Apple's iPhone sales in China fell 7% QoQ amid intensifying competition from Huawei and economic headwinds. Analysts warn this could pressure hardware margins in upcoming quarters.",
+            "ticker": "AAPL",
+            "sentiment": "bearish",
+            "sentimentScore": -0.58,
+            "url": "#"
+        },
+        {
+            "id": 8,
+            "headline": "Tesla Cybertruck production hits 2,500 units per week milestone",
+            "source": "Electrek",
+            "datetime": "2024-01-28T11:00:00Z",
+            "summary": "Giga Texas Cybertruck line reached 2,500 units/week, ahead of schedule. Backlog remains at 1.5M reservations. Margin breakeven now expected by Q2 rather than Q3.",
+            "ticker": "TSLA",
+            "sentiment": "bullish",
+            "sentimentScore": 0.72,
+            "url": "#"
+        },
+        {
+            "id": 9,
+            "headline": "Alphabet CEO warns AI costs will remain elevated through 2025",
+            "source": "MarketWatch",
+            "datetime": "2024-01-28T09:30:00Z",
+            "summary": "Sundar Pichai cautioned investors that AI infrastructure capex will remain elevated, with $30B+ planned for 2024. While necessary for competitive positioning, this pressures near-term margins.",
+            "ticker": "GOOGL",
+            "sentiment": "bearish",
+            "sentimentScore": -0.45,
+            "url": "#"
+        },
+        {
+            "id": 10,
+            "headline": "Amazon Prime Video ad tier surpasses 50 million subscribers globally",
+            "source": "Variety",
+            "datetime": "2024-01-27T15:00:00Z",
+            "summary": "Amazon's ad-supported Prime Video tier has exceeded 50M subscribers, generating an estimated $3B annual advertising revenue. This validates Amazon's entry into the streaming advertising market.",
+            "ticker": "AMZN",
+            "sentiment": "bullish",
+            "sentimentScore": 0.68,
+            "url": "#"
+        }
+    ]
+}
