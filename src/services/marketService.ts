@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabaseClient';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { fetchLiveQuote } from './growwService';
 
 // ── Groww API availability check ──
@@ -58,21 +58,23 @@ export function getAvailableTickers(): string[] {
 // ── Quote Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches current price quote. Tries Supabase Edge → Groww API → Yahoo proxy → returns null.
+ * Fetches current price quote. Tries Supabase Edge → Groww API → Vercel API → Yahoo proxy → returns null.
  */
 export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
-    // Layer 1: Supabase Edge Function
-    try {
-        const { data, error } = await supabase.functions.invoke('get-stock-quote', {
-            body: { ticker }
-        });
+    // Layer 1: Supabase Edge Function (only when configured)
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabase.functions.invoke('get-stock-quote', {
+                body: { ticker }
+            });
 
-        if (!error && data && data.price) {
-            console.log(`✅ [Quote] Supabase Edge: ${ticker} → ₹${data.price}`);
-            return data as QuoteData;
+            if (!error && data && data.price) {
+                console.log(`✅ [Quote] Supabase Edge: ${ticker} → ₹${data.price}`);
+                return data as QuoteData;
+            }
+        } catch (err) {
+            console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
         }
-    } catch (err) {
-        console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
     }
 
     // Layer 2: Groww Live API (real-time, if API key is configured)
@@ -100,7 +102,23 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
         }
     }
 
-    // Layer 3: Yahoo Finance via Vite proxy
+    // Layer 3: Vercel serverless API route (works in production)
+    try {
+        const url = `/api/stock-quote?ticker=${encodeURIComponent(ticker)}`;
+        const response = await fetch(url);
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data && data.price) {
+                console.log(`✅ [Quote] Vercel API: ${ticker} → ₹${data.price}`);
+                return data as QuoteData;
+            }
+        }
+    } catch (err) {
+        console.warn(`⚠️ [Quote] Vercel API failed for ${ticker}:`, err);
+    }
+
+    // Layer 4: Yahoo Finance via Vite proxy (works in development)
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=1m&range=1d`;
         const response = await fetch(url);
@@ -136,28 +154,46 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
 // ── Candle Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches OHLCV candle data. Tries Supabase Edge → Groww API → Yahoo proxy → returns null.
+ * Fetches OHLCV candle data. Tries Supabase Edge → Vercel API → Yahoo proxy → returns null.
  */
 export async function fetchCandles(
     ticker: string,
     interval: string = '1d',
     range: string = '1mo'
 ): Promise<CandlestickPoint[] | null> {
-    // Layer 1: Supabase Edge Function
-    try {
-        const { data, error } = await supabase.functions.invoke('get-stock-candles', {
-            body: { ticker, interval, range }
-        });
+    // Layer 1: Supabase Edge Function (only when configured)
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabase.functions.invoke('get-stock-candles', {
+                body: { ticker, interval, range }
+            });
 
-        if (!error && data?.candles && data.candles.length > 0) {
-            console.log(`✅ [Candles] Supabase Edge: ${ticker} → ${data.candles.length} candles`);
-            return data.candles as CandlestickPoint[];
+            if (!error && data?.candles && data.candles.length > 0) {
+                console.log(`✅ [Candles] Supabase Edge: ${ticker} → ${data.candles.length} candles`);
+                return data.candles as CandlestickPoint[];
+            }
+        } catch (err) {
+            console.warn(`⚠️ [Candles] Supabase Edge failed for ${ticker}:`, err);
         }
-    } catch (err) {
-        console.warn(`⚠️ [Candles] Supabase Edge failed for ${ticker}:`, err);
     }
 
-    // Layer 2: Yahoo Finance via Vite proxy
+    // Layer 2: Vercel serverless API route (works in production)
+    try {
+        const url = `/api/stock-candles?ticker=${encodeURIComponent(ticker)}&interval=${encodeURIComponent(interval)}&range=${encodeURIComponent(range)}`;
+        const response = await fetch(url);
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data?.candles && data.candles.length > 0) {
+                console.log(`✅ [Candles] Vercel API: ${ticker} → ${data.candles.length} candles`);
+                return data.candles as CandlestickPoint[];
+            }
+        }
+    } catch (err) {
+        console.warn(`⚠️ [Candles] Vercel API failed for ${ticker}:`, err);
+    }
+
+    // Layer 3: Yahoo Finance via Vite proxy (works in development)
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=${interval}&range=${range}`;
         const response = await fetch(url);
