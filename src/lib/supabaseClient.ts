@@ -5,10 +5,18 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+// Track whether Supabase is properly configured
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+
+if (!isSupabaseConfigured) {
   console.warn(
-    '⚠️ Supabase URL or Anon Key is missing. Check your .env.local file.'
+    '⚠️ Supabase URL or Anon Key is missing. Auth features are disabled — demo mode is still available. Check your .env.local file.'
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Use placeholder values when env vars are missing so createClient does not
+// throw at module-load time (which causes a blank screen on Vercel).
+export const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseAnonKey || 'placeholder-anon-key'
+);
