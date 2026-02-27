@@ -152,8 +152,10 @@ export async function fetchCandles(
     // Layer 2: Groww Charting API
     try {
         // Convert interval/range to Groww format
-        const intervalMinutes = interval === '1m' ? 1 : interval === '5m' ? 5 : interval === '15m' ? 15 : interval === '1h' ? 60 : 1440;
-        const rangeDays = range === '1d' ? 1 : range === '5d' ? 5 : range === '1mo' ? 30 : range === '3mo' ? 90 : range === '6mo' ? 180 : range === '1y' ? 365 : 30;
+        const intervalMap: Record<string, number> = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '1d': 1440 };
+        const rangeMap: Record<string, number> = { '1d': 1, '5d': 5, '1mo': 30, '3mo': 90, '6mo': 180, '1y': 365 };
+        const intervalMinutes = intervalMap[interval] ?? 1440;
+        const rangeDays = rangeMap[range] ?? 30;
 
         const growwCandles = await fetchGrowwCandles(ticker, intervalMinutes, rangeDays);
         if (growwCandles && growwCandles.length > 0) {

@@ -169,7 +169,7 @@ export const fetchGrowwCandles = async (
 
         // Groww returns candles as arrays: [timestamp, open, high, low, close, volume]
         const candles: GrowwCandle[] = (data.candles ?? []).map(
-            (c: [number, number, number, number, number, number]) => ({
+            (c: number[]) => ({
                 timestamp: c[0],
                 open: c[1],
                 high: c[2],
