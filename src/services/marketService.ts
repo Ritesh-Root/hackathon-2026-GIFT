@@ -1,5 +1,3 @@
-import { supabase } from '../lib/supabaseClient';
-
 // ── Types ──
 
 export interface CandlestickPoint {
@@ -52,24 +50,27 @@ export function getAvailableTickers(): string[] {
 // ── Quote Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches current price quote. Tries Supabase Edge → Yahoo proxy → returns null.
+ * Fetches current price quote. Tries the serverless API route first (reliable
+ * server-side fetch), then falls back to the direct Yahoo Finance proxy.
  */
 export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
-    // Layer 1: Supabase Edge Function
+    // 1) Try the Vercel/dev API route (server-side fetch — no CORS/cookie issues)
     try {
-        const { data, error } = await supabase.functions.invoke('get-stock-quote', {
-            body: { ticker }
-        });
+        const apiUrl = `/api/stock-quote?ticker=${encodeURIComponent(ticker)}`;
+        const apiRes = await fetch(apiUrl);
 
-        if (!error && data && data.price) {
-            console.log(`✅ [Quote] Supabase Edge: ${ticker} → ₹${data.price}`);
-            return data as QuoteData;
+        if (apiRes.ok) {
+            const quote: QuoteData = await apiRes.json();
+            if (quote.price) {
+                console.log(`✅ [Quote] API route: ${ticker} → ₹${quote.price}`);
+                return quote;
+            }
         }
     } catch (err) {
-        console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
+        console.warn(`⚠️ [Quote] API route failed for ${ticker}:`, err);
     }
 
-    // Layer 2: Yahoo Finance via Vite proxy
+    // 2) Fallback: direct Yahoo Finance proxy (works in Vite dev, may fail in production)
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=1m&range=1d`;
         const response = await fetch(url);
@@ -105,28 +106,32 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
 // ── Candle Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches OHLCV candle data. Tries Supabase Edge → Yahoo proxy → returns null.
+ * Fetches OHLCV candle data. Tries the serverless API route first (reliable
+ * server-side fetch), then falls back to the direct Yahoo Finance proxy.
  */
 export async function fetchCandles(
     ticker: string,
     interval: string = '1d',
     range: string = '1mo'
 ): Promise<CandlestickPoint[] | null> {
-    // Layer 1: Supabase Edge Function
+    // 1) Try the Vercel/dev API route
     try {
-        const { data, error } = await supabase.functions.invoke('get-stock-candles', {
-            body: { ticker, interval, range }
-        });
+        const apiUrl = `/api/stock-candles?ticker=${encodeURIComponent(ticker)}&interval=${interval}&range=${range}`;
+        const apiRes = await fetch(apiUrl);
 
-        if (!error && data?.candles && data.candles.length > 0) {
-            console.log(`✅ [Candles] Supabase Edge: ${ticker} → ${data.candles.length} candles`);
-            return data.candles as CandlestickPoint[];
+        if (apiRes.ok) {
+            const json = await apiRes.json();
+            const candles: CandlestickPoint[] = json?.candles ?? [];
+            if (candles.length > 0) {
+                console.log(`✅ [Candles] API route: ${ticker} → ${candles.length} candles`);
+                return candles;
+            }
         }
     } catch (err) {
-        console.warn(`⚠️ [Candles] Supabase Edge failed for ${ticker}:`, err);
+        console.warn(`⚠️ [Candles] API route failed for ${ticker}:`, err);
     }
 
-    // Layer 2: Yahoo Finance via Vite proxy
+    // 2) Fallback: direct Yahoo Finance proxy
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=${interval}&range=${range}`;
         const response = await fetch(url);

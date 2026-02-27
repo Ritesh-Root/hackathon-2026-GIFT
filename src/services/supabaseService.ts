@@ -4,7 +4,7 @@
  * Handles CRUD operations and Realtime subscriptions.
  */
 
-import { supabase } from '../lib/supabaseClient';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
 // ── Types ──
@@ -55,6 +55,7 @@ export interface DbUserProgress {
 // ── Messages (Community Chat) ──
 
 export async function fetchMessages(limit = 50): Promise<DbMessage[]> {
+    if (!isSupabaseConfigured) return [];
     const { data, error } = await supabase
         .from('messages')
         .select('*')
@@ -74,6 +75,7 @@ export async function sendMessage(
     avatar: string,
     text: string
 ): Promise<DbMessage | null> {
+    if (!isSupabaseConfigured) return null;
     const { data, error } = await supabase
         .from('messages')
         .insert({ user_id: userId, username, avatar, text })
@@ -90,6 +92,9 @@ export async function sendMessage(
 export function subscribeToMessages(
     onNewMessage: (msg: DbMessage) => void
 ): RealtimeChannel {
+    if (!isSupabaseConfigured) {
+        return supabase.channel('noop');
+    }
     const channel = supabase
         .channel('public:messages')
         .on(
@@ -119,6 +124,7 @@ export async function savePrediction(prediction: {
     ai_reasoning: string;
     is_correct: boolean;
 }): Promise<DbPrediction | null> {
+    if (!isSupabaseConfigured) return null;
     const { data, error } = await supabase
         .from('predictions')
         .insert(prediction)
@@ -136,6 +142,7 @@ export async function fetchUserPredictions(
     userId: string,
     limit = 20
 ): Promise<DbPrediction[]> {
+    if (!isSupabaseConfigured) return [];
     const { data, error } = await supabase
         .from('predictions')
         .select('*')
@@ -153,6 +160,7 @@ export async function fetchUserPredictions(
 // ── Holdings (Portfolio) ──
 
 export async function fetchHoldings(userId: string): Promise<DbHolding[]> {
+    if (!isSupabaseConfigured) return [];
     const { data, error } = await supabase
         .from('holdings')
         .select('*')
@@ -169,6 +177,7 @@ export async function fetchHoldings(userId: string): Promise<DbHolding[]> {
 export async function upsertHolding(
     holding: Omit<DbHolding, 'id' | 'created_at' | 'updated_at'>
 ): Promise<DbHolding | null> {
+    if (!isSupabaseConfigured) return null;
     const { data, error } = await supabase
         .from('holdings')
         .upsert(holding, { onConflict: 'user_id,ticker' })
@@ -193,6 +202,7 @@ export async function upsertHolding(
 }
 
 export async function deleteHolding(holdingId: string): Promise<boolean> {
+    if (!isSupabaseConfigured) return false;
     const { error } = await supabase
         .from('holdings')
         .delete()
@@ -210,6 +220,7 @@ export async function deleteHolding(holdingId: string): Promise<boolean> {
 export async function fetchUserProgress(
     userId: string
 ): Promise<DbUserProgress[]> {
+    if (!isSupabaseConfigured) return [];
     const { data, error } = await supabase
         .from('user_progress')
         .select('*')
@@ -228,6 +239,7 @@ export async function updateUserProgress(
     progress: number,
     quizScore?: number
 ): Promise<DbUserProgress | null> {
+    if (!isSupabaseConfigured) return null;
     const payload: Record<string, unknown> = {
         user_id: userId,
         module_id: moduleId,
