@@ -53,15 +53,18 @@ export default async function handler(request: Request): Promise<Response> {
         }
 
         const candles = timestamps
-            .map((ts: number, i: number) => ({
-                date: new Date(ts * 1000).toISOString().split('T')[0],
-                time: new Date(ts * 1000).toISOString(),
-                open: indicators.open?.[i] ?? 0,
-                high: indicators.high?.[i] ?? 0,
-                low: indicators.low?.[i] ?? 0,
-                close: indicators.close?.[i] ?? 0,
-                volume: indicators.volume?.[i] ?? 0,
-            }))
+            .map((ts: number, i: number) => {
+                const d = new Date(ts * 1000);
+                return {
+                    date: d.toISOString().split('T')[0],
+                    time: d.toISOString(),
+                    open: indicators.open?.[i] ?? 0,
+                    high: indicators.high?.[i] ?? 0,
+                    low: indicators.low?.[i] ?? 0,
+                    close: indicators.close?.[i] ?? 0,
+                    volume: indicators.volume?.[i] ?? 0,
+                };
+            })
             .filter((c: { close: number }) => c.close !== 0);
 
         return new Response(
