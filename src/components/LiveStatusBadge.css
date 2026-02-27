@@ -1,0 +1,86 @@
+/* ── LiveStatusBadge ── */
+
+.live-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    margin-top: 6px;
+}
+
+/* ── Connected (neon green) ── */
+.lsb-live {
+    background: rgba(0, 255, 100, 0.08);
+    border: 1px solid rgba(0, 255, 100, 0.25);
+    color: #39ff6e;
+}
+
+.lsb-live .lsb-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #39ff6e;
+    box-shadow: 0 0 6px rgba(0, 255, 100, 0.7), 0 0 12px rgba(0, 255, 100, 0.3);
+    animation: lsb-pulse-green 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+/* ── Disconnected (red) ── */
+.lsb-disconnected {
+    background: rgba(255, 59, 48, 0.08);
+    border: 1px solid rgba(255, 59, 48, 0.25);
+    color: #ff6b6b;
+}
+
+.lsb-disconnected .lsb-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ff3b30;
+    box-shadow: 0 0 6px rgba(255, 59, 48, 0.5);
+    flex-shrink: 0;
+}
+
+/* ── Checking (dim) ── */
+.lsb-checking {
+    background: rgba(148, 163, 184, 0.06);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+}
+
+.lsb-checking .lsb-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #94a3b8;
+    box-shadow: none;
+    animation: lsb-pulse-dim 1.5s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.lsb-text {
+    line-height: 1;
+}
+
+/* ── Animations ── */
+@keyframes lsb-pulse-green {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 6px rgba(0, 255, 100, 0.7), 0 0 12px rgba(0, 255, 100, 0.3);
+    }
+    50% {
+        opacity: 0.6;
+        box-shadow: 0 0 10px rgba(0, 255, 100, 0.9), 0 0 20px rgba(0, 255, 100, 0.5);
+    }
+}
+
+@keyframes lsb-pulse-dim {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
