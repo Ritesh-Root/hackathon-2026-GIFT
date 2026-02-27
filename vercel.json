@@ -1,6 +1,10 @@
 {
     "rewrites": [
         {
+            "source": "/yahoo-finance/:path*",
+            "destination": "https://query2.finance.yahoo.com/:path*"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
