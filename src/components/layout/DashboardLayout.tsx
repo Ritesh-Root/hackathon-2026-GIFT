@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import UserProfileDrawer from './UserProfileDrawer';
 import CommandPalette from './CommandPalette';
+import LiveStatusBadge from '../LiveStatusBadge';
 import './DashboardLayout.css';
 
 const NAV_ITEMS = [
@@ -40,6 +41,7 @@ export default function DashboardLayout() {
                     <div className="sidebar-brand-text">
                         <span className="sidebar-brand-name gradient-text">AI Finance Copilot</span>
                         <span className="sidebar-brand-sub">Your Smart Trading Partner</span>
+                        <LiveStatusBadge />
                     </div>
                 </div>
 
