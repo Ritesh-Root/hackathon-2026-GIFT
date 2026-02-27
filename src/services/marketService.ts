@@ -4,7 +4,7 @@ import { fetchLiveQuote } from './growwService';
 // ── Groww API availability check ──
 
 const GROWW_API_KEY = import.meta.env.VITE_GROWW_API_KEY || '';
-const isGrowwConfigured = !!GROWW_API_KEY && GROWW_API_KEY !== 'demo_key_123';
+const isGrowwConfigured = !!GROWW_API_KEY;
 
 // ── Types ──
 
