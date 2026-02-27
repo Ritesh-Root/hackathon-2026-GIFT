@@ -45,12 +45,17 @@ For a detailed breakdown of all libraries and tools, see [TECHNOLOGIES.md](./TEC
    ```
 
 3. **Environment Variables**
-   Create a `.env.local` file and add:
+   Create a `.env.local` file (see `.env.example` for reference) and add:
    ```env
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_anon_key
    VITE_GROQ_API_KEY=your_groq_key
+   VITE_GROWW_API_KEY=your_groww_api_key
+   VITE_GROWW_API_SECRET_KEY=your_groww_api_secret
    ```
+
+   > ⚠️ **Never commit `.env.local` or any file containing real API keys to the repository.**
+   > The `.gitignore` is configured to exclude these files automatically.
 
 4. **Run Development Server**
    ```bash

@@ -1,4 +1,10 @@
 import { supabase } from '../lib/supabaseClient';
+import { fetchLiveQuote } from './growwService';
+
+// ── Groww API availability check ──
+
+const GROWW_API_KEY = import.meta.env.VITE_GROWW_API_KEY || '';
+const isGrowwConfigured = !!GROWW_API_KEY && GROWW_API_KEY !== 'demo_key_123';
 
 // ── Types ──
 
@@ -52,7 +58,7 @@ export function getAvailableTickers(): string[] {
 // ── Quote Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches current price quote. Tries Supabase Edge → Yahoo proxy → returns null.
+ * Fetches current price quote. Tries Supabase Edge → Groww API → Yahoo proxy → returns null.
  */
 export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
     // Layer 1: Supabase Edge Function
@@ -69,7 +75,32 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
         console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
     }
 
-    // Layer 2: Yahoo Finance via Vite proxy
+    // Layer 2: Groww Live API (real-time, if API key is configured)
+    if (isGrowwConfigured) {
+        try {
+            const growwQuote = await fetchLiveQuote(ticker);
+            if (growwQuote && growwQuote.ltp) {
+                const quote: QuoteData = {
+                    price: growwQuote.ltp,
+                    previousClose: growwQuote.close ?? growwQuote.ltp,
+                    change: growwQuote.ltp - (growwQuote.close ?? growwQuote.ltp),
+                    changePercent: growwQuote.close
+                        ? ((growwQuote.ltp - growwQuote.close) / growwQuote.close) * 100
+                        : 0,
+                    volume: 0,
+                    dayHigh: growwQuote.high ?? growwQuote.ltp,
+                    dayLow: growwQuote.low ?? growwQuote.ltp,
+                    timestamp: growwQuote.timestamp || new Date().toISOString(),
+                };
+                console.log(`✅ [Quote] Groww API: ${ticker} → ₹${quote.price}`);
+                return quote;
+            }
+        } catch (err) {
+            console.warn(`⚠️ [Quote] Groww API failed for ${ticker}:`, err);
+        }
+    }
+
+    // Layer 3: Yahoo Finance via Vite proxy
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=1m&range=1d`;
         const response = await fetch(url);
@@ -105,7 +136,7 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
 // ── Candle Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches OHLCV candle data. Tries Supabase Edge → Yahoo proxy → returns null.
+ * Fetches OHLCV candle data. Tries Supabase Edge → Groww API → Yahoo proxy → returns null.
  */
 export async function fetchCandles(
     ticker: string,

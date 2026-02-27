@@ -13,6 +13,13 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/yahoo-finance/, ''),
         secure: true,
       },
+      // Proxy Groww Trading API calls (bypasses CORS for real-time data)
+      '/api/groww': {
+        target: 'https://api.groww.in',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/groww/, '/v1/api'),
+        secure: true,
+      },
     },
   },
 })
