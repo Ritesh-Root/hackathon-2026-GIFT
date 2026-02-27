@@ -1,4 +1,5 @@
-import { supabase } from '../lib/supabaseClient';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { fetchLiveQuote, fetchGrowwCandles } from './growwService';
 
 // ── Types ──
 
@@ -52,24 +53,48 @@ export function getAvailableTickers(): string[] {
 // ── Quote Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches current price quote. Tries Supabase Edge → Yahoo proxy → returns null.
+ * Fetches current price quote. Tries Supabase Edge → Groww API → Yahoo proxy → returns null.
  */
 export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
-    // Layer 1: Supabase Edge Function
-    try {
-        const { data, error } = await supabase.functions.invoke('get-stock-quote', {
-            body: { ticker }
-        });
+    // Layer 1: Supabase Edge Function (only when configured)
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabase.functions.invoke('get-stock-quote', {
+                body: { ticker }
+            });
 
-        if (!error && data && data.price) {
-            console.log(`✅ [Quote] Supabase Edge: ${ticker} → ₹${data.price}`);
-            return data as QuoteData;
+            if (!error && data && data.price) {
+                console.log(`✅ [Quote] Supabase Edge: ${ticker} → ₹${data.price}`);
+                return data as QuoteData;
+            }
+        } catch (err) {
+            console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
         }
-    } catch (err) {
-        console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
     }
 
-    // Layer 2: Yahoo Finance via Vite proxy
+    // Layer 2: Groww Live API
+    try {
+        const growwQuote = await fetchLiveQuote(ticker);
+        if (growwQuote && growwQuote.ltp > 0) {
+            const prevClose = growwQuote.previousClose ?? growwQuote.close;
+            const quote: QuoteData = {
+                price: growwQuote.ltp,
+                previousClose: prevClose,
+                change: growwQuote.dayChange ?? (growwQuote.ltp - prevClose),
+                changePercent: growwQuote.dayChangePerc ?? (prevClose ? ((growwQuote.ltp - prevClose) / prevClose) * 100 : 0),
+                volume: growwQuote.volume ?? 0,
+                dayHigh: growwQuote.high,
+                dayLow: growwQuote.low,
+                timestamp: growwQuote.timestamp ?? new Date().toISOString(),
+            };
+            console.log(`✅ [Quote] Groww API: ${ticker} → ₹${quote.price}`);
+            return quote;
+        }
+    } catch (err) {
+        console.warn(`⚠️ [Quote] Groww API failed for ${ticker}:`, err);
+    }
+
+    // Layer 3: Yahoo Finance via Vite proxy
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=1m&range=1d`;
         const response = await fetch(url);
@@ -105,28 +130,57 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
 // ── Candle Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches OHLCV candle data. Tries Supabase Edge → Yahoo proxy → returns null.
+ * Fetches OHLCV candle data. Tries Supabase Edge → Groww API → Yahoo proxy → returns null.
  */
 export async function fetchCandles(
     ticker: string,
     interval: string = '1d',
     range: string = '1mo'
 ): Promise<CandlestickPoint[] | null> {
-    // Layer 1: Supabase Edge Function
-    try {
-        const { data, error } = await supabase.functions.invoke('get-stock-candles', {
-            body: { ticker, interval, range }
-        });
+    // Layer 1: Supabase Edge Function (only when configured)
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabase.functions.invoke('get-stock-candles', {
+                body: { ticker, interval, range }
+            });
 
-        if (!error && data?.candles && data.candles.length > 0) {
-            console.log(`✅ [Candles] Supabase Edge: ${ticker} → ${data.candles.length} candles`);
-            return data.candles as CandlestickPoint[];
+            if (!error && data?.candles && data.candles.length > 0) {
+                console.log(`✅ [Candles] Supabase Edge: ${ticker} → ${data.candles.length} candles`);
+                return data.candles as CandlestickPoint[];
+            }
+        } catch (err) {
+            console.warn(`⚠️ [Candles] Supabase Edge failed for ${ticker}:`, err);
         }
-    } catch (err) {
-        console.warn(`⚠️ [Candles] Supabase Edge failed for ${ticker}:`, err);
     }
 
-    // Layer 2: Yahoo Finance via Vite proxy
+    // Layer 2: Groww Charting API
+    try {
+        // Convert interval/range to Groww format
+        const intervalMap: Record<string, number> = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '1d': 1440 };
+        const rangeMap: Record<string, number> = { '1d': 1, '5d': 5, '1mo': 30, '3mo': 90, '6mo': 180, '1y': 365 };
+        const intervalMinutes = intervalMap[interval] ?? 1440;
+        const rangeDays = rangeMap[range] ?? 30;
+
+        const growwCandles = await fetchGrowwCandles(ticker, intervalMinutes, rangeDays);
+        if (growwCandles && growwCandles.length > 0) {
+            const candles: CandlestickPoint[] = growwCandles.map(c => ({
+                date: new Date(c.timestamp * 1000).toISOString().split('T')[0],
+                time: new Date(c.timestamp * 1000).toISOString(),
+                open: c.open,
+                high: c.high,
+                low: c.low,
+                close: c.close,
+                volume: c.volume,
+            })).filter(c => c.close !== 0);
+
+            console.log(`✅ [Candles] Groww API: ${ticker} → ${candles.length} candles`);
+            return candles;
+        }
+    } catch (err) {
+        console.warn(`⚠️ [Candles] Groww API failed for ${ticker}:`, err);
+    }
+
+    // Layer 3: Yahoo Finance via Vite proxy
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=${interval}&range=${range}`;
         const response = await fetch(url);

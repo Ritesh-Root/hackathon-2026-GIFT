@@ -13,6 +13,13 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/yahoo-finance/, ''),
         secure: true,
       },
+      // Proxy Groww API calls through the Vite dev server (bypasses CORS)
+      '/api/groww': {
+        target: 'https://groww.in/v1/api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/groww/, ''),
+        secure: true,
+      },
     },
   },
 })
