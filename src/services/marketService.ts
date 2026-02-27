@@ -69,34 +69,20 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
         console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
     }
 
-    // Layer 2: Yahoo Finance via Vite proxy
+    // Layer 2: API route (Vercel Edge Function in prod, Vite middleware in dev)
     try {
-        const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=1m&range=1d`;
+        const url = `/api/stock-quote?ticker=${encodeURIComponent(ticker)}`;
         const response = await fetch(url);
 
         if (response.ok) {
-            const json = await response.json();
-            const meta = json?.chart?.result?.[0]?.meta;
-
-            if (meta?.regularMarketPrice) {
-                const quote: QuoteData = {
-                    price: meta.regularMarketPrice,
-                    previousClose: meta.previousClose ?? meta.regularMarketPrice,
-                    change: meta.regularMarketPrice - (meta.previousClose ?? meta.regularMarketPrice),
-                    changePercent: meta.previousClose
-                        ? ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose) * 100
-                        : 0,
-                    volume: meta.regularMarketVolume ?? 0,
-                    dayHigh: meta.regularMarketDayHigh ?? meta.regularMarketPrice,
-                    dayLow: meta.regularMarketDayLow ?? meta.regularMarketPrice,
-                    timestamp: new Date().toISOString(),
-                };
-                console.log(`✅ [Quote] Yahoo Proxy: ${ticker} → ₹${quote.price}`);
-                return quote;
+            const data = await response.json();
+            if (data?.price) {
+                console.log(`✅ [Quote] API Route: ${ticker} → ₹${data.price}`);
+                return data as QuoteData;
             }
         }
     } catch (err) {
-        console.warn(`⚠️ [Quote] Yahoo Proxy failed for ${ticker}:`, err);
+        console.warn(`⚠️ [Quote] API Route failed for ${ticker}:`, err);
     }
 
     return null;
@@ -126,36 +112,20 @@ export async function fetchCandles(
         console.warn(`⚠️ [Candles] Supabase Edge failed for ${ticker}:`, err);
     }
 
-    // Layer 2: Yahoo Finance via Vite proxy
+    // Layer 2: API route (Vercel Edge Function in prod, Vite middleware in dev)
     try {
-        const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=${interval}&range=${range}`;
+        const url = `/api/stock-candles?ticker=${encodeURIComponent(ticker)}&interval=${interval}&range=${range}`;
         const response = await fetch(url);
 
         if (response.ok) {
             const json = await response.json();
-            const result = json?.chart?.result?.[0];
-            const timestamps = result?.timestamp;
-            const indicators = result?.indicators?.quote?.[0];
-
-            if (timestamps && indicators) {
-                const candles: CandlestickPoint[] = timestamps
-                    .map((ts: number, i: number) => ({
-                        date: new Date(ts * 1000).toISOString().split('T')[0],
-                        time: new Date(ts * 1000).toISOString(),
-                        open: indicators.open?.[i] ?? 0,
-                        high: indicators.high?.[i] ?? 0,
-                        low: indicators.low?.[i] ?? 0,
-                        close: indicators.close?.[i] ?? 0,
-                        volume: indicators.volume?.[i] ?? 0,
-                    }))
-                    .filter((c: CandlestickPoint) => c.close !== 0);
-
-                console.log(`✅ [Candles] Yahoo Proxy: ${ticker} → ${candles.length} candles`);
-                return candles;
+            if (json?.candles && json.candles.length > 0) {
+                console.log(`✅ [Candles] API Route: ${ticker} → ${json.candles.length} candles`);
+                return json.candles as CandlestickPoint[];
             }
         }
     } catch (err) {
-        console.warn(`⚠️ [Candles] Yahoo Proxy failed for ${ticker}:`, err);
+        console.warn(`⚠️ [Candles] API Route failed for ${ticker}:`, err);
     }
 
     return null;
