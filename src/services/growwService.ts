@@ -3,16 +3,24 @@
 // Simulates live API integration using Vite proxy to bypass CORS.
 
 const GROWW_API_BASE = '/api/groww';
-const API_KEY = import.meta.env.VITE_GROWW_API_KEY || 'demo_key_123';
+const API_KEY = import.meta.env.VITE_GROWW_API_KEY || '';
 const API_SECRET = import.meta.env.VITE_GROWW_API_SECRET_KEY || '';
 
 /**
- * Common Headers required for Groww API
+ * Authenticated headers for portfolio / order endpoints (require Groww API credentials).
  */
-const getHeaders = () => ({
+const getAuthHeaders = () => ({
     'Authorization': `Bearer ${API_KEY}`,
     'X-API-VERSION': '1.0',
     'X-API-SECRET': API_SECRET,
+    'Content-Type': 'application/json',
+});
+
+/**
+ * Minimal headers for public market-data endpoints (quotes, candles).
+ * Sending invalid auth tokens causes Groww to reject otherwise-public requests.
+ */
+const getPublicHeaders = () => ({
     'Content-Type': 'application/json',
 });
 
@@ -97,7 +105,7 @@ export const fetchLiveQuote = async (ticker: string): Promise<LiveQuote> => {
     try {
         const response = await fetch(
             `${GROWW_API_BASE}/stocks_data/v1/accord_points/exchange/NSE/segment/CASH/latest_prices_ohlc/${symbol}`,
-            { method: 'GET', headers: getHeaders() }
+            { method: 'GET', headers: getPublicHeaders() }
         );
 
         if (!response.ok) throw new Error(`Failed to fetch quote for ${symbol}`);
@@ -129,7 +137,7 @@ export const fetchMarketDepth = async (ticker: string): Promise<MarketDepth> => 
     try {
         const response = await fetch(`${GROWW_API_BASE}/market/depth/${symbol}`, {
             method: 'GET',
-            headers: getHeaders(),
+            headers: getPublicHeaders(),
         });
 
         if (!response.ok) throw new Error(`Failed to fetch market depth for ${symbol}`);
@@ -161,22 +169,27 @@ export const fetchGrowwCandles = async (
         const response = await fetch(
             `${GROWW_API_BASE}/charting_service/v2/chart/exchange/NSE/segment/CASH/${symbol}` +
             `?endDate=${fmt(endDate)}&intervalInMinutes=${intervalMinutes}&startDate=${fmt(startDate)}`,
-            { method: 'GET', headers: getHeaders() }
+            { method: 'GET', headers: getPublicHeaders() }
         );
 
         if (!response.ok) throw new Error(`Failed to fetch candles for ${symbol}`);
         const data = await response.json();
 
         // Groww returns candles as arrays: [timestamp, open, high, low, close, volume]
-        const candles: GrowwCandle[] = (data.candles ?? []).map(
-            (c: number[]) => ({
-                timestamp: c[0],
-                open: c[1],
-                high: c[2],
-                low: c[3],
-                close: c[4],
-                volume: c[5] ?? 0,
-            })
+        const raw = data.candles ?? data.chartData ?? [];
+        const candles: GrowwCandle[] = raw.map(
+            (c: number[]) => {
+                // Detect seconds vs milliseconds: timestamps > 1e12 are in ms
+                const ts = c[0] > 1e12 ? Math.floor(c[0] / 1000) : c[0];
+                return {
+                    timestamp: ts,
+                    open: c[1],
+                    high: c[2],
+                    low: c[3],
+                    close: c[4],
+                    volume: c[5] ?? 0,
+                };
+            }
         );
 
         return candles;
@@ -195,7 +208,7 @@ export const fetchUserHoldings = async (): Promise<Holding[]> => {
     try {
         const response = await fetch(`${GROWW_API_BASE}/portfolio/holdings`, {
             method: 'GET',
-            headers: getHeaders(),
+            headers: getAuthHeaders(),
         });
 
         if (!response.ok) throw new Error('Failed to fetch user holdings');
@@ -214,7 +227,7 @@ export const fetchAvailableBalance = async (): Promise<BalanceInfo> => {
     try {
         const response = await fetch(`${GROWW_API_BASE}/account/balance`, {
             method: 'GET',
-            headers: getHeaders(),
+            headers: getAuthHeaders(),
         });
 
         if (!response.ok) throw new Error('Failed to fetch available balance');
@@ -239,7 +252,7 @@ export const placeMarketOrder = async (
     try {
         const response = await fetch(`${GROWW_API_BASE}/order/place`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: getAuthHeaders(),
             body: JSON.stringify({
                 ticker,
                 quantity,
@@ -264,7 +277,7 @@ export const cancelOrder = async (orderId: string): Promise<OrderResponse> => {
     try {
         const response = await fetch(`${GROWW_API_BASE}/order/cancel/${orderId}`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: getAuthHeaders(),
         });
 
         if (!response.ok) throw new Error(`Failed to cancel order ${orderId}`);

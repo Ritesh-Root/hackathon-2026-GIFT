@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabaseClient';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { fetchLiveQuote, fetchGrowwCandles } from './growwService';
 
 // ── Types ──
@@ -56,18 +56,20 @@ export function getAvailableTickers(): string[] {
  * Fetches current price quote. Tries Supabase Edge → Groww API → Yahoo proxy → returns null.
  */
 export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
-    // Layer 1: Supabase Edge Function
-    try {
-        const { data, error } = await supabase.functions.invoke('get-stock-quote', {
-            body: { ticker }
-        });
+    // Layer 1: Supabase Edge Function (only when configured)
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabase.functions.invoke('get-stock-quote', {
+                body: { ticker }
+            });
 
-        if (!error && data && data.price) {
-            console.log(`✅ [Quote] Supabase Edge: ${ticker} → ₹${data.price}`);
-            return data as QuoteData;
+            if (!error && data && data.price) {
+                console.log(`✅ [Quote] Supabase Edge: ${ticker} → ₹${data.price}`);
+                return data as QuoteData;
+            }
+        } catch (err) {
+            console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
         }
-    } catch (err) {
-        console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
     }
 
     // Layer 2: Groww Live API
@@ -135,18 +137,20 @@ export async function fetchCandles(
     interval: string = '1d',
     range: string = '1mo'
 ): Promise<CandlestickPoint[] | null> {
-    // Layer 1: Supabase Edge Function
-    try {
-        const { data, error } = await supabase.functions.invoke('get-stock-candles', {
-            body: { ticker, interval, range }
-        });
+    // Layer 1: Supabase Edge Function (only when configured)
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabase.functions.invoke('get-stock-candles', {
+                body: { ticker, interval, range }
+            });
 
-        if (!error && data?.candles && data.candles.length > 0) {
-            console.log(`✅ [Candles] Supabase Edge: ${ticker} → ${data.candles.length} candles`);
-            return data.candles as CandlestickPoint[];
+            if (!error && data?.candles && data.candles.length > 0) {
+                console.log(`✅ [Candles] Supabase Edge: ${ticker} → ${data.candles.length} candles`);
+                return data.candles as CandlestickPoint[];
+            }
+        } catch (err) {
+            console.warn(`⚠️ [Candles] Supabase Edge failed for ${ticker}:`, err);
         }
-    } catch (err) {
-        console.warn(`⚠️ [Candles] Supabase Edge failed for ${ticker}:`, err);
     }
 
     // Layer 2: Groww Charting API
