@@ -155,6 +155,7 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
 
 /**
  * Fetches OHLCV candle data. Tries Supabase Edge → Vercel API → Yahoo proxy → returns null.
+ * Note: Groww API only provides live quotes (LTP), not OHLCV candle history.
  */
 export async function fetchCandles(
     ticker: string,
