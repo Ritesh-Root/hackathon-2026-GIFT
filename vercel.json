@@ -1,6 +1,10 @@
 {
     "rewrites": [
         {
+            "source": "/api/groww/:path*",
+            "destination": "https://groww.in/v1/api/:path*"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }

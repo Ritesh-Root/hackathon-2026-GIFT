@@ -25,7 +25,20 @@ export interface LiveQuote {
     high: number;
     low: number;
     close: number;
+    previousClose?: number;
+    dayChange?: number;
+    dayChangePerc?: number;
+    volume?: number;
     timestamp: string;
+}
+
+export interface GrowwCandle {
+    timestamp: number;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume: number;
 }
 
 export interface OrderBookEntry {
@@ -70,20 +83,40 @@ export interface OrderResponse {
 // --- 1. Market Data Engine ---
 
 /**
- * Fetches the real-time LTP, open, high, low, and close for a specific stock.
+ * Converts a ticker (e.g. "RELIANCE.NS") to Groww's NSE symbol format ("RELIANCE").
+ */
+const toGrowwSymbol = (ticker: string): string =>
+    ticker.replace(/\.NS$/i, '').toUpperCase();
+
+/**
+ * Fetches the real-time LTP, open, high, low, and close for a specific stock
+ * using Groww's stock data API.
  */
 export const fetchLiveQuote = async (ticker: string): Promise<LiveQuote> => {
+    const symbol = toGrowwSymbol(ticker);
     try {
-        const response = await fetch(`${GROWW_API_BASE}/market/quote/${ticker}`, {
-            method: 'GET',
-            headers: getHeaders(),
-        });
+        const response = await fetch(
+            `${GROWW_API_BASE}/stocks_data/v1/accord_points/exchange/NSE/segment/CASH/latest_prices_ohlc/${symbol}`,
+            { method: 'GET', headers: getHeaders() }
+        );
 
-        if (!response.ok) throw new Error(`Failed to fetch quote for ${ticker}`);
+        if (!response.ok) throw new Error(`Failed to fetch quote for ${symbol}`);
         const data = await response.json();
-        return data as LiveQuote;
+        return {
+            ticker: symbol,
+            ltp: data.ltp ?? data.lastTradedPrice ?? 0,
+            open: data.open ?? 0,
+            high: data.high ?? 0,
+            low: data.low ?? 0,
+            close: data.close ?? 0,
+            previousClose: data.previousClose ?? data.prevDayClose ?? 0,
+            dayChange: data.dayChange ?? 0,
+            dayChangePerc: data.dayChangePerc ?? 0,
+            volume: data.volume ?? data.totalTradedVolume ?? 0,
+            timestamp: data.ts ?? new Date().toISOString(),
+        } as LiveQuote;
     } catch (error) {
-        console.error(`[Groww API] Error fetching live quote for ${ticker}:`, error);
+        console.error(`[Groww API] Error fetching live quote for ${symbol}:`, error);
         throw error;
     }
 };
@@ -92,17 +125,63 @@ export const fetchLiveQuote = async (ticker: string): Promise<LiveQuote> => {
  * Fetches the top 5 bid/ask orders (Order Book) for advanced trading insights.
  */
 export const fetchMarketDepth = async (ticker: string): Promise<MarketDepth> => {
+    const symbol = toGrowwSymbol(ticker);
     try {
-        const response = await fetch(`${GROWW_API_BASE}/market/depth/${ticker}`, {
+        const response = await fetch(`${GROWW_API_BASE}/market/depth/${symbol}`, {
             method: 'GET',
             headers: getHeaders(),
         });
 
-        if (!response.ok) throw new Error(`Failed to fetch market depth for ${ticker}`);
+        if (!response.ok) throw new Error(`Failed to fetch market depth for ${symbol}`);
         const data = await response.json();
         return data as MarketDepth;
     } catch (error) {
-        console.error(`[Groww API] Error fetching market depth for ${ticker}:`, error);
+        console.error(`[Groww API] Error fetching market depth for ${symbol}:`, error);
+        throw error;
+    }
+};
+
+/**
+ * Fetches OHLCV candle data from Groww's charting service.
+ * Converts range/interval params to Groww's date-based format.
+ */
+export const fetchGrowwCandles = async (
+    ticker: string,
+    intervalMinutes: number = 1440,
+    rangeDays: number = 30
+): Promise<GrowwCandle[]> => {
+    const symbol = toGrowwSymbol(ticker);
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - rangeDays);
+
+    const fmt = (d: Date) => d.toISOString().split('T')[0];
+
+    try {
+        const response = await fetch(
+            `${GROWW_API_BASE}/charting_service/v2/chart/exchange/NSE/segment/CASH/${symbol}` +
+            `?endDate=${fmt(endDate)}&intervalInMinutes=${intervalMinutes}&startDate=${fmt(startDate)}`,
+            { method: 'GET', headers: getHeaders() }
+        );
+
+        if (!response.ok) throw new Error(`Failed to fetch candles for ${symbol}`);
+        const data = await response.json();
+
+        // Groww returns candles as arrays: [timestamp, open, high, low, close, volume]
+        const candles: GrowwCandle[] = (data.candles ?? []).map(
+            (c: [number, number, number, number, number, number]) => ({
+                timestamp: c[0],
+                open: c[1],
+                high: c[2],
+                low: c[3],
+                close: c[4],
+                volume: c[5] ?? 0,
+            })
+        );
+
+        return candles;
+    } catch (error) {
+        console.error(`[Groww API] Error fetching candles for ${symbol}:`, error);
         throw error;
     }
 };
