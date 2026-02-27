@@ -1,5 +1,3 @@
-import { supabase } from '../lib/supabaseClient';
-
 // ── Types ──
 
 export interface CandlestickPoint {
@@ -52,24 +50,9 @@ export function getAvailableTickers(): string[] {
 // ── Quote Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches current price quote. Tries Supabase Edge → Yahoo proxy → returns null.
+ * Fetches current price quote directly from Yahoo Finance proxy.
  */
 export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
-    // Layer 1: Supabase Edge Function
-    try {
-        const { data, error } = await supabase.functions.invoke('get-stock-quote', {
-            body: { ticker }
-        });
-
-        if (!error && data && data.price) {
-            console.log(`✅ [Quote] Supabase Edge: ${ticker} → ₹${data.price}`);
-            return data as QuoteData;
-        }
-    } catch (err) {
-        console.warn(`⚠️ [Quote] Supabase Edge failed for ${ticker}:`, err);
-    }
-
-    // Layer 2: Yahoo Finance via Vite proxy
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=1m&range=1d`;
         const response = await fetch(url);
@@ -105,28 +88,13 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
 // ── Candle Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches OHLCV candle data. Tries Supabase Edge → Yahoo proxy → returns null.
+ * Fetches OHLCV candle data directly from Yahoo Finance proxy.
  */
 export async function fetchCandles(
     ticker: string,
     interval: string = '1d',
     range: string = '1mo'
 ): Promise<CandlestickPoint[] | null> {
-    // Layer 1: Supabase Edge Function
-    try {
-        const { data, error } = await supabase.functions.invoke('get-stock-candles', {
-            body: { ticker, interval, range }
-        });
-
-        if (!error && data?.candles && data.candles.length > 0) {
-            console.log(`✅ [Candles] Supabase Edge: ${ticker} → ${data.candles.length} candles`);
-            return data.candles as CandlestickPoint[];
-        }
-    } catch (err) {
-        console.warn(`⚠️ [Candles] Supabase Edge failed for ${ticker}:`, err);
-    }
-
-    // Layer 2: Yahoo Finance via Vite proxy
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=${interval}&range=${range}`;
         const response = await fetch(url);
