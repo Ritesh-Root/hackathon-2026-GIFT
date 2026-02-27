@@ -30,12 +30,8 @@ function getCookies(res: Response): string {
 }
 
 /** Fetch Yahoo Finance chart JSON with automatic cookie+crumb auth. */
-async function fetchYahooChart(
-    ticker: string,
-    interval: string,
-    range: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchYahooChart(ticker: string, interval: string, range: string): Promise<any> {
     const encodedTicker = encodeURIComponent(ticker);
     const params = `interval=${encodeURIComponent(interval)}&range=${encodeURIComponent(range)}`;
 
