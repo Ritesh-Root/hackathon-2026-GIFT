@@ -10,7 +10,7 @@ function excludeVercelApi(): Plugin {
       server.middlewares.use((req, res, next) => {
         if (req.url?.startsWith('/api/')) {
           res.statusCode = 404;
-          res.end(JSON.stringify({ error: 'API routes are only available in production (Vercel)' }));
+          res.end(JSON.stringify({ error: 'API routes are only available in production (Vercel). Use the Yahoo Finance proxy at /yahoo-finance/ for local development.' }));
           return;
         }
         next();
