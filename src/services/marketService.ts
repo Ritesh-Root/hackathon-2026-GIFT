@@ -50,9 +50,27 @@ export function getAvailableTickers(): string[] {
 // ── Quote Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches current price quote directly from Yahoo Finance proxy.
+ * Fetches current price quote. Tries the serverless API route first (reliable
+ * server-side fetch), then falls back to the direct Yahoo Finance proxy.
  */
 export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
+    // 1) Try the Vercel/dev API route (server-side fetch — no CORS/cookie issues)
+    try {
+        const apiUrl = `/api/stock-quote?ticker=${encodeURIComponent(ticker)}`;
+        const apiRes = await fetch(apiUrl);
+
+        if (apiRes.ok) {
+            const quote: QuoteData = await apiRes.json();
+            if (quote.price) {
+                console.log(`✅ [Quote] API route: ${ticker} → ₹${quote.price}`);
+                return quote;
+            }
+        }
+    } catch (err) {
+        console.warn(`⚠️ [Quote] API route failed for ${ticker}:`, err);
+    }
+
+    // 2) Fallback: direct Yahoo Finance proxy (works in Vite dev, may fail in production)
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=1m&range=1d`;
         const response = await fetch(url);
@@ -88,13 +106,32 @@ export async function fetchQuote(ticker: string): Promise<QuoteData | null> {
 // ── Candle Fetcher (used by useLiveStock) ──
 
 /**
- * Fetches OHLCV candle data directly from Yahoo Finance proxy.
+ * Fetches OHLCV candle data. Tries the serverless API route first (reliable
+ * server-side fetch), then falls back to the direct Yahoo Finance proxy.
  */
 export async function fetchCandles(
     ticker: string,
     interval: string = '1d',
     range: string = '1mo'
 ): Promise<CandlestickPoint[] | null> {
+    // 1) Try the Vercel/dev API route
+    try {
+        const apiUrl = `/api/stock-candles?ticker=${encodeURIComponent(ticker)}&interval=${interval}&range=${range}`;
+        const apiRes = await fetch(apiUrl);
+
+        if (apiRes.ok) {
+            const json = await apiRes.json();
+            const candles: CandlestickPoint[] = json?.candles ?? [];
+            if (candles.length > 0) {
+                console.log(`✅ [Candles] API route: ${ticker} → ${candles.length} candles`);
+                return candles;
+            }
+        }
+    } catch (err) {
+        console.warn(`⚠️ [Candles] API route failed for ${ticker}:`, err);
+    }
+
+    // 2) Fallback: direct Yahoo Finance proxy
     try {
         const url = `/yahoo-finance/v8/finance/chart/${ticker}?interval=${interval}&range=${range}`;
         const response = await fetch(url);
