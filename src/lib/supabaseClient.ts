@@ -5,10 +5,18 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+// True when real Supabase credentials are provided.
+// When false the app runs in demo mode — auth, chat, and portfolio features are disabled.
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+
+if (!isSupabaseConfigured) {
   console.warn(
-    '⚠️ Supabase URL or Anon Key is missing. Check your .env.local file.'
+    '⚠️ Supabase URL or Anon Key is missing. Running in demo mode. Check your .env.local file.'
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Use placeholder values when env vars are missing so createClient doesn't throw.
+export const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseAnonKey || 'placeholder-anon-key'
+);

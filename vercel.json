@@ -5,6 +5,10 @@
             "destination": "https://groww.in/v1/api/:path*"
         },
         {
+            "source": "/yahoo-finance/:path*",
+            "destination": "https://query2.finance.yahoo.com/:path*"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
